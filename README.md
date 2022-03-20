@@ -1,2 +1,2 @@
 # Tentanto
-Python web framework powered by C/C++ + Golang
+Golang web server with Lua framework
