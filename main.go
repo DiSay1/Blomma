@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/DiSay1/Tentanto/console"
 	"github.com/DiSay1/Tentanto/router"
 )
 
@@ -17,5 +17,5 @@ func main() {
 		}
 	}()
 
-	fmt.Scanln()
+	console.StartConsole()
 }
