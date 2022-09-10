@@ -1,2 +1,2 @@
-# Tentanto
-Golang web server with Lua framework
+# Blomma
+Blomma is a web server written in Golang that uses Lua as its internal scripting language.
