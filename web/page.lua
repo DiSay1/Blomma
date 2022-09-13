@@ -1,3 +1,5 @@
+address = "/page"
+
 function Get(str) 
     return "<!DOCTYPE html>\n"..
     "<html>\n"..

@@ -2,17 +2,21 @@ package console
 
 import (
 	"fmt"
-	"log"
+	"strings"
 
-	"github.com/DiSay1/Tentanto/states"
+	"github.com/DiSay1/Blomma/server/states"
 )
 
+var logger = NewLogger("console")
+
 func StartConsole() {
+	logger.Info("Console loaded successfully")
+
 	for {
 		var cmd, args, values string
 
 		fmt.Scan(&cmd, &args, &values)
-		Handler(cmd, args, values)
+		Handler(strings.ToLower(cmd), strings.ToUpper(args), strings.ToLower(values))
 	}
 }
 
@@ -23,10 +27,10 @@ func Handler(cmd, args, values string) {
 		case "DEBUG_MOD":
 			if values == "false" {
 				states.DEBUG_MOD = false
-				log.Println("| DEBUG_MOD = " + values)
+				logger.Info("| DEBUG_MOD = " + values)
 			} else {
 				states.DEBUG_MOD = true
-				log.Println("| DEBUG_MOD = true")
+				logger.Info("| DEBUG_MOD = true")
 			}
 		}
 	}
