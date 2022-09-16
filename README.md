@@ -14,7 +14,9 @@ Blomma is a kind of analogue of Apache PHP. Actually works on a similar principl
 - [ ] Gopherlua updates to the latest versions of Lua (I'm not sure if I can do it, but I'll try)
 - [ ] Config
 
-Goal for first working version: Make the scripting engine and server capable of REST API development
 
+#### Goal
+
+Goal for first working version: Make the scripting engine and server capable of REST API development
 
 I will be glad to any suggestions on the project!
