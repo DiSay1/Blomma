@@ -1,3 +1,5 @@
+address = "/"
+
 function Handler (req)
     if req.method == "POST" then
         postData = req.getFormData({"message"})
