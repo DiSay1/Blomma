@@ -14,6 +14,8 @@ type Address struct {
 	Address string
 	Path    string
 
+	Type string
+
 	State *lua.LState
 }
 
@@ -53,12 +55,16 @@ func loadPaths() error {
 						Address: address.String(),
 						Path:    path,
 
+						Type: "lua",
+
 						State: l,
 					})
 				} else {
 					Paths = append(Paths, &Address{
 						Address: webPath,
 						Path:    path,
+
+						Type: "lua",
 
 						State: l,
 					})
@@ -68,6 +74,8 @@ func loadPaths() error {
 				Paths = append(Paths, &Address{
 					Address: webPath,
 					Path:    path,
+
+					Type: "html",
 
 					State: nil,
 				})

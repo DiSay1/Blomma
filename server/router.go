@@ -3,29 +3,57 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"os"
 
+	"github.com/DiSay1/Blomma/standart-libs"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func addressHandler(rw http.ResponseWriter, req *http.Request) {
 	for _, a := range Paths {
 		if a.Address == req.URL.Path {
-			if err := a.State.DoFile(a.Path); err != nil {
-				log.Panic("Error compiling file. Error:", err)
-			}
+			if a.Type == "lua" {
+				if err := a.State.DoFile(a.Path); err != nil {
+					log.Panic("Error compiling file. Error:", err)
+					return
+				}
 
-			if err := a.State.CallByParam(
-				lua.P{
-					Fn:      a.State.GetGlobal("Get"),
-					NRet:    1,
-					Protect: true,
-				},
-			); err != nil {
-				log.Panic("Failed to get handler function. Error:", err)
-				//
+				if err := a.State.CallByParam(
+					lua.P{
+						Fn:      a.State.GetGlobal("Handler"),
+						NRet:    1,
+						Protect: true,
+					}, standart.NewRequest(a.State, rw, req),
+				); err != nil {
+					log.Panic("Failed to get handler function. Error:", err)
+					return
+				}
+				return
+			} else if a.Type == "html" {
+				data, err := os.ReadFile(a.Path)
+				if err != nil {
+					log.Panic("Err:", err)
+					return
+				}
+
+				_, err = fmt.Fprint(rw, string(data))
+				if err != nil {
+					log.Panic("Err", err)
+				}
+				return
 			}
-			res := a.State.Get(-1)
-			fmt.Fprint(rw, res.String())
 		}
+	}
+
+	data, err := os.ReadFile("./static" + req.URL.Path)
+	if err != nil {
+		log.Panic("Err:", err)
+		return
+	}
+
+	_, err = fmt.Fprint(rw, string(data))
+	if err != nil {
+		log.Panic("Err", err)
+		return
 	}
 }
