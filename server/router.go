@@ -14,7 +14,7 @@ func addressHandler(rw http.ResponseWriter, req *http.Request) {
 		if a.Address == req.URL.Path {
 			if a.Type == "lua" {
 				if err := a.State.DoFile(a.Path); err != nil {
-					log.Panic("Error compiling file. Error:", err)
+					log.Panic("File compilation error. Error:", err)
 					return
 				}
 
@@ -23,9 +23,9 @@ func addressHandler(rw http.ResponseWriter, req *http.Request) {
 						Fn:      a.State.GetGlobal("Handler"),
 						NRet:    1,
 						Protect: true,
-					}, standart.NewRequest(a.State, rw, req),
+					}, standart.NewHTTPRequest(a.State, rw, req),
 				); err != nil {
-					log.Panic("Failed to get handler function. Error:", err)
+					log.Panic("The function cannot be executed. Error:", err)
 					return
 				}
 				return

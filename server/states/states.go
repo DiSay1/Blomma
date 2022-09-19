@@ -1,3 +1,3 @@
 package states
 
-var DEBUG_MOD = true
+var DEV_MODE = true

@@ -14,14 +14,15 @@ type Address struct {
 	Address string
 	Path    string
 
-	Type string
+	isWebSocket bool
+	Type        string
 
 	State *lua.LState
 }
 
 var Paths []*Address
 
-func loadPaths() error {
+func LoadPaths() error {
 	err := filepath.Walk("./web", func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -42,10 +43,19 @@ func loadPaths() error {
 					return err
 				}
 
-				address := l.GetGlobal("address")
+				options := l.GetGlobal("options")
+				address := l.GetField(options, "Address")
 
 				if address.Type() != lua.LTString && address.Type() != lua.LTNil {
 					return fmt.Errorf("in file %v address is not a string", path)
+				}
+
+				isWebSocket := false
+				websocket := l.GetField(options, "WebSocket")
+				if websocket.Type() == lua.LTBool {
+					if websocket.String() == "true" {
+						isWebSocket = true
+					}
 				}
 
 				webPath := strings.ReplaceAll(path, "web/", "/")
@@ -55,7 +65,8 @@ func loadPaths() error {
 						Address: address.String(),
 						Path:    path,
 
-						Type: "lua",
+						isWebSocket: isWebSocket,
+						Type:        "lua",
 
 						State: l,
 					})
@@ -64,7 +75,8 @@ func loadPaths() error {
 						Address: webPath,
 						Path:    path,
 
-						Type: "lua",
+						isWebSocket: isWebSocket,
+						Type:        "lua",
 
 						State: l,
 					})
@@ -75,18 +87,19 @@ func loadPaths() error {
 					Address: webPath,
 					Path:    path,
 
-					Type: "html",
+					isWebSocket: false,
+					Type:        "html",
 
 					State: nil,
 				})
 			}
 		}
 
-		sort.SliceStable(Paths, func(i, j int) bool {
-			return Paths[i].Address < Paths[j].Address
-		})
-
 		return err
+	})
+
+	sort.SliceStable(Paths, func(i, j int) bool {
+		return Paths[i].Address < Paths[j].Address
 	})
 
 	return err

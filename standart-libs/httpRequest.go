@@ -8,14 +8,14 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
-type BlommaRequest struct {
+type BlommaHTTPRequest struct {
 	rw  http.ResponseWriter
 	req *http.Request
 }
 
 var log = console.NewLogger("library")
 
-func (b *BlommaRequest) getQuery(l *lua.LState) int {
+func (b *BlommaHTTPRequest) getQuery(l *lua.LState) int {
 	args := l.ToString(1)
 	query := b.req.URL.Query()
 
@@ -28,7 +28,7 @@ func (b *BlommaRequest) getQuery(l *lua.LState) int {
 	return 1
 }
 
-func (b *BlommaRequest) getFormData(l *lua.LState) int {
+func (b *BlommaHTTPRequest) getFormData(l *lua.LState) int {
 	if err := b.req.ParseForm(); err != nil {
 		log.Panic("An error occurred while trying to parse the form. Error:", err)
 		return 0
@@ -47,7 +47,7 @@ func (b *BlommaRequest) getFormData(l *lua.LState) int {
 	return 1
 }
 
-func (b *BlommaRequest) getHeaders(l *lua.LState) int {
+func (b *BlommaHTTPRequest) getHeaders(l *lua.LState) int {
 	args := l.ToString(1)
 
 	l.Push(lua.LString(b.req.Header.Get(args)))
@@ -55,15 +55,15 @@ func (b *BlommaRequest) getHeaders(l *lua.LState) int {
 	return 1
 }
 
-func (b *BlommaRequest) write(l *lua.LState) int {
+func (b *BlommaHTTPRequest) write(l *lua.LState) int {
 	if _, err := fmt.Fprint(b.rw, l.ToString(1)); err != nil {
-		log.Panic("Response send with err. Err:", err)
+		log.Panic("No response was sent. Error:", err)
 	}
 	return 0
 }
 
-func NewRequest(l *lua.LState, rw http.ResponseWriter, req *http.Request) *lua.LTable {
-	request := BlommaRequest{rw: rw, req: req}
+func NewHTTPRequest(l *lua.LState, rw http.ResponseWriter, req *http.Request) *lua.LTable {
+	request := BlommaHTTPRequest{rw: rw, req: req}
 
 	var exports = map[string]lua.LGFunction{
 		"write":       request.write,

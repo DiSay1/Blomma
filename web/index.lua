@@ -1,4 +1,7 @@
-address = "/"
+options = {
+    Address = "/hello",
+    WebSocket = false,
+}
 
 function Handler (req)
     if req.method == "POST" then
