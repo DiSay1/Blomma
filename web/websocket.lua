@@ -4,5 +4,5 @@ options = {
 }
 
 function Handler(req)
-    req.write(req.mt, "Ваня ЛОХ!")
+    req.write(req.mt, "Hello world!")
 end
