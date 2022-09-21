@@ -19,12 +19,16 @@ func StartServer() {
 	for _, handler := range Handlers {
 		if handler.isWebSocket {
 			http.HandleFunc(handler.Address, handler.websocketHandler)
-		} else if handler.Type == "lua" {
+		} else if handler.Type == "lua" && !handler.isWebSocket {
 			if err := handler.State.DoFile(handler.Path); err != nil {
 				log.Fatal("File compilation error. Error:", err)
 				return
 			}
-			http.HandleFunc(handler.Address, handler.addressHandler)
+			if handler.Address == "/" {
+				http.HandleFunc("/", handler.indexRouter)
+			} else {
+				http.HandleFunc(handler.Address, handler.addressHandler)
+			}
 		}
 	}
 

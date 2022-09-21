@@ -9,7 +9,7 @@ options = {
 function Handler (request)
     -- Записываем названия переменной из query параметров.
     local varible = request.getQuery("varible")
-    
+
     -- Выводим значения желоемой переменной
     request.write(varible.." "..valueController.getValue(varible))
 end

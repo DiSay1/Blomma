@@ -10,6 +10,26 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
+func (h *Handler) indexRouter(rw http.ResponseWriter, req *http.Request) {
+	_, err := os.Stat("./static" + req.URL.Path)
+	if err != nil {
+		h.addressHandler(rw, req)
+		return
+	}
+
+	data, err := os.ReadFile("./static" + req.URL.Path)
+	if err != nil {
+		log.Panic("Err:", err)
+		return
+	}
+
+	_, err = fmt.Fprint(rw, string(data))
+	if err != nil {
+		log.Panic("Err", err)
+		return
+	}
+}
+
 func (h *Handler) addressHandler(rw http.ResponseWriter, req *http.Request) {
 	if h.Type == "lua" {
 		if states.DEV_MODE {
@@ -41,18 +61,6 @@ func (h *Handler) addressHandler(rw http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			log.Panic("Err", err)
 		}
-		return
-	}
-
-	data, err := os.ReadFile("./static" + req.URL.Path)
-	if err != nil {
-		log.Panic("Err:", err)
-		return
-	}
-
-	_, err = fmt.Fprint(rw, string(data))
-	if err != nil {
-		log.Panic("Err", err)
 		return
 	}
 }

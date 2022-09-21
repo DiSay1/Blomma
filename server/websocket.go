@@ -21,9 +21,7 @@ func (h *Handler) websocketHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var ws blommaWS
-
-	ws = blommaWS{
+	ws := blommaWS{
 		luaState: h.State,
 	}
 
