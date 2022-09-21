@@ -3,6 +3,10 @@ options = {
     WebSocket = true,
 }
 
-function Handler(req)
-    req.write(req.mt, "Hello world!")
+function onMessage(req)
+    req.write(req.mt, req.data)
+end
+
+function onClose(req)
+    print(req.mt)
 end

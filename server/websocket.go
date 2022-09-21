@@ -10,6 +10,10 @@ import (
 
 var upgrader = websocket.Upgrader{} // use default options
 
+type blommaWS struct {
+	luaState *lua.LState
+}
+
 func websocketHandler(rw http.ResponseWriter, req *http.Request) {
 	c, err := upgrader.Upgrade(rw, req, nil)
 	if err != nil {
@@ -17,7 +21,7 @@ func websocketHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var luaState *lua.LState
+	var ws blommaWS
 
 	for _, a := range Paths {
 		if req.URL.Path == a.Address && a.isWebSocket {
@@ -26,30 +30,46 @@ func websocketHandler(rw http.ResponseWriter, req *http.Request) {
 				return
 			}
 
-			luaState = a.State
+			ws = blommaWS{
+				luaState: a.State,
+			}
 		}
 	}
+
+	c.SetCloseHandler(ws.closeHandler)
 
 	defer c.Close()
 	for {
 		mt, message, err := c.ReadMessage()
-		if mt == -1 {
-			break
-		}
 		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
+				break
+			}
 			log.Panic("An error occurred while trying to read the WebSocket packet. Error:", err)
 			break
 		}
 
-		if err := luaState.CallByParam(
+		if err := ws.luaState.CallByParam(
 			lua.P{
-				Fn:      luaState.GetGlobal("Handler"),
+				Fn:      ws.luaState.GetGlobal("onMessage"),
 				NRet:    1,
 				Protect: true,
-			}, standart.NewWebSocketMessage(luaState, mt, message, c),
+			}, standart.NewWSMessage(ws.luaState, mt, message, c),
 		); err != nil {
 			log.Panic("The function cannot be executed. Error:", err)
 			return
 		}
 	}
+}
+
+func (ws *blommaWS) closeHandler(code int, text string) error {
+	if err := ws.luaState.CallByParam(lua.P{
+		Fn:      ws.luaState.GetGlobal("onClose"),
+		NRet:    1,
+		Protect: true,
+	}, standart.NewWSOnCloseMessage(ws.luaState, code, text)); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -21,7 +21,7 @@ func (wsMessage *BlommaWSMessage) write(l *lua.LState) int {
 	return 0
 }
 
-func NewWebSocketMessage(l *lua.LState, mt int, data []byte, c *websocket.Conn) *lua.LTable {
+func NewWSMessage(l *lua.LState, mt int, data []byte, c *websocket.Conn) *lua.LTable {
 	request := BlommaWSMessage{Conn: c}
 
 	var exports = map[string]lua.LGFunction{
@@ -32,6 +32,15 @@ func NewWebSocketMessage(l *lua.LState, mt int, data []byte, c *websocket.Conn) 
 
 	l.SetField(t, "mt", lua.LNumber(mt))
 	l.SetField(t, "data", lua.LString(data))
+
+	return t
+}
+
+func NewWSOnCloseMessage(l *lua.LState, mt int, text string) *lua.LTable {
+	t := l.NewTable()
+
+	l.SetField(t, "mt", lua.LNumber(mt))
+	l.SetField(t, "data", lua.LString(text))
 
 	return t
 }
