@@ -18,7 +18,7 @@ func reload(args ...string) {
 	case "PATHS":
 		logger.Info("Trying to reload paths...")
 
-		server.Paths = nil
+		server.Handlers = nil
 		if err := server.LoadPaths(); err != nil {
 			logger.Info("An error occurred while trying to reload the paths. Error:", err)
 			return

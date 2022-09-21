@@ -10,7 +10,7 @@ import (
 )
 
 func addressHandler(rw http.ResponseWriter, req *http.Request) {
-	for _, a := range Paths {
+	for _, a := range Handlers {
 		if a.Address == req.URL.Path {
 			if a.Type == "lua" {
 				if err := a.State.DoFile(a.Path); err != nil {

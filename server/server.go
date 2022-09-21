@@ -16,7 +16,7 @@ func StartServer() {
 		log.Fatal("An error occurred while trying to load router paths. Error:", err)
 	}
 
-	for _, address := range Paths {
+	for _, address := range Handlers {
 		if address.isWebSocket {
 			http.HandleFunc(address.Address, websocketHandler)
 		}

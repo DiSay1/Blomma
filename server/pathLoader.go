@@ -10,7 +10,7 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
-type Address struct {
+type Handler struct {
 	Address string
 	Path    string
 
@@ -20,7 +20,7 @@ type Address struct {
 	State *lua.LState
 }
 
-var Paths []*Address
+var Handlers []*Handler
 
 func LoadPaths() error {
 	err := filepath.Walk("./web", func(path string, info fs.FileInfo, err error) error {
@@ -61,7 +61,7 @@ func LoadPaths() error {
 				webPath := strings.ReplaceAll(path, "web/", "/")
 
 				if address.Type() == lua.LTString {
-					Paths = append(Paths, &Address{
+					Handlers = append(Handlers, &Handler{
 						Address: address.String(),
 						Path:    path,
 
@@ -71,7 +71,7 @@ func LoadPaths() error {
 						State: l,
 					})
 				} else {
-					Paths = append(Paths, &Address{
+					Handlers = append(Handlers, &Handler{
 						Address: webPath,
 						Path:    path,
 
@@ -83,7 +83,7 @@ func LoadPaths() error {
 				}
 			case "html":
 				webPath := strings.ReplaceAll(path, "web/", "/")
-				Paths = append(Paths, &Address{
+				Handlers = append(Handlers, &Handler{
 					Address: webPath,
 					Path:    path,
 
@@ -98,8 +98,8 @@ func LoadPaths() error {
 		return err
 	})
 
-	sort.SliceStable(Paths, func(i, j int) bool {
-		return Paths[i].Address < Paths[j].Address
+	sort.SliceStable(Handlers, func(i, j int) bool {
+		return Handlers[i].Address < Handlers[j].Address
 	})
 
 	return err

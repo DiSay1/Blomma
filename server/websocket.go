@@ -23,7 +23,7 @@ func websocketHandler(rw http.ResponseWriter, req *http.Request) {
 
 	var ws blommaWS
 
-	for _, a := range Paths {
+	for _, a := range Handlers {
 		if req.URL.Path == a.Address && a.isWebSocket {
 			if err := a.State.DoFile(a.Path); err != nil {
 				log.Panic("File compilation error. Error:", err)
