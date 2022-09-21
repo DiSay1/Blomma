@@ -5,32 +5,35 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/DiSay1/Blomma/server/states"
 	"github.com/DiSay1/Blomma/standart-libs"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func addressHandler(rw http.ResponseWriter, req *http.Request) {
-	for _, a := range Handlers {
-		if a.Address == req.URL.Path {
-			if a.Type == "lua" {
-				if err := a.State.DoFile(a.Path); err != nil {
-					log.Panic("File compilation error. Error:", err)
-					return
+	for _, handler := range Handlers {
+		if handler.Address == req.URL.Path {
+			if handler.Type == "lua" {
+				if states.DEV_MODE {
+					if err := handler.State.DoFile(handler.Path); err != nil {
+						log.Panic("File compilation error. Error:", err)
+						return
+					}
 				}
 
-				if err := a.State.CallByParam(
+				if err := handler.State.CallByParam(
 					lua.P{
-						Fn:      a.State.GetGlobal("Handler"),
+						Fn:      handler.State.GetGlobal("Handler"),
 						NRet:    1,
 						Protect: true,
-					}, standart.NewHTTPRequest(a.State, rw, req),
+					}, standart.NewHTTPRequest(handler.State, rw, req),
 				); err != nil {
 					log.Panic("The function cannot be executed. Error:", err)
 					return
 				}
 				return
-			} else if a.Type == "html" {
-				data, err := os.ReadFile(a.Path)
+			} else if handler.Type == "html" {
+				data, err := os.ReadFile(handler.Path)
 				if err != nil {
 					log.Panic("Err:", err)
 					return

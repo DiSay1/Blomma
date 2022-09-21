@@ -16,9 +16,14 @@ func StartServer() {
 		log.Fatal("An error occurred while trying to load router paths. Error:", err)
 	}
 
-	for _, address := range Handlers {
-		if address.isWebSocket {
-			http.HandleFunc(address.Address, websocketHandler)
+	for _, handler := range Handlers {
+		if handler.isWebSocket {
+			http.HandleFunc(handler.Address, websocketHandler)
+		} else if handler.Type == "lua" {
+			if err := handler.State.DoFile(handler.Path); err != nil {
+				log.Fatal("File compilation error. Error:", err)
+				return
+			}
 		}
 	}
 

@@ -1,16 +1,10 @@
+local valueController = require "valueController"
+
 options = {
-    Address = "/hello",
+    Address = "/",
     WebSocket = false,
 }
 
 function Handler (req)
-    if req.method == "POST" then
-        postData = req.getFormData({"message"})
-        req.write(postData.message)
-    elseif req.method == "GET" then
-        header = req.getHeader("message")
-        query = req.getQuery("index")
-        req.write(query.."\n")
-        req.write(header.."\n")
-    end
+    req.write("Close count = "..valueController.getValue("closeCount"))
 end

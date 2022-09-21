@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/DiSay1/Blomma/standart-libs"
 	lua "github.com/yuin/gopher-lua"
 )
 
@@ -38,6 +39,7 @@ func LoadPaths() error {
 			switch pathElement[1] {
 			case "lua":
 				l := lua.NewState()
+				l.PreloadModule("valueController", standart.InitGLLib)
 
 				if err := l.DoFile("./" + strings.ReplaceAll(path, `\`, `/`)); err != nil {
 					return err
