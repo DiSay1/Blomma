@@ -1,3 +1,3 @@
 package states
 
-var DEV_MODE = true
+var DEV_MODE = false

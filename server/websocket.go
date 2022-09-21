@@ -14,7 +14,7 @@ type blommaWS struct {
 	luaState *lua.LState
 }
 
-func websocketHandler(rw http.ResponseWriter, req *http.Request) {
+func (h *Handler) websocketHandler(rw http.ResponseWriter, req *http.Request) {
 	c, err := upgrader.Upgrade(rw, req, nil)
 	if err != nil {
 		log.Fatal("An error occurred while trying to create a WebSocket address. Error:", err)
@@ -23,18 +23,8 @@ func websocketHandler(rw http.ResponseWriter, req *http.Request) {
 
 	var ws blommaWS
 
-	for _, a := range Handlers {
-		if req.URL.Path == a.Address && a.isWebSocket {
-			if err := a.State.DoFile(a.Path); err != nil {
-				log.Panic("File compilation error. Error:", err)
-				return
-			}
-
-			ws = blommaWS{
-				luaState: a.State,
-			}
-			break
-		}
+	ws = blommaWS{
+		luaState: h.State,
 	}
 
 	c.SetCloseHandler(ws.closeHandler)

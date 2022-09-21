@@ -1,8 +1,9 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/DiSay1/Blomma/console"
-	"github.com/DiSay1/Blomma/console/commands"
 	"github.com/DiSay1/Blomma/server"
 )
 
@@ -15,5 +16,5 @@ func main() {
 	log.Info("Server start...")
 
 	log.Info("Application launched successfully!")
-	commands.StartConsole()
+	fmt.Scanln()
 }

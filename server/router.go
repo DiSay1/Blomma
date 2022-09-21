@@ -10,42 +10,38 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
-func addressHandler(rw http.ResponseWriter, req *http.Request) {
-	for _, handler := range Handlers {
-		if handler.Address == req.URL.Path {
-			if handler.Type == "lua" {
-				if states.DEV_MODE {
-					if err := handler.State.DoFile(handler.Path); err != nil {
-						log.Panic("File compilation error. Error:", err)
-						return
-					}
-				}
-
-				if err := handler.State.CallByParam(
-					lua.P{
-						Fn:      handler.State.GetGlobal("Handler"),
-						NRet:    1,
-						Protect: true,
-					}, standart.NewHTTPRequest(handler.State, rw, req),
-				); err != nil {
-					log.Panic("The function cannot be executed. Error:", err)
-					return
-				}
-				return
-			} else if handler.Type == "html" {
-				data, err := os.ReadFile(handler.Path)
-				if err != nil {
-					log.Panic("Err:", err)
-					return
-				}
-
-				_, err = fmt.Fprint(rw, string(data))
-				if err != nil {
-					log.Panic("Err", err)
-				}
+func (h *Handler) addressHandler(rw http.ResponseWriter, req *http.Request) {
+	if h.Type == "lua" {
+		if states.DEV_MODE {
+			if err := h.State.DoFile(h.Path); err != nil {
+				log.Panic("File compilation error. Error:", err)
 				return
 			}
 		}
+
+		if err := h.State.CallByParam(
+			lua.P{
+				Fn:      h.State.GetGlobal("Handler"),
+				NRet:    1,
+				Protect: true,
+			}, standart.NewHTTPRequest(h.State, rw, req),
+		); err != nil {
+			log.Panic("The function cannot be executed. Error:", err)
+			return
+		}
+		return
+	} else if h.Type == "html" {
+		data, err := os.ReadFile(h.Path)
+		if err != nil {
+			log.Panic("Err:", err)
+			return
+		}
+
+		_, err = fmt.Fprint(rw, string(data))
+		if err != nil {
+			log.Panic("Err", err)
+		}
+		return
 	}
 
 	data, err := os.ReadFile("./static" + req.URL.Path)

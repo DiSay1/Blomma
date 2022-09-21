@@ -1,13 +1,17 @@
-local valueController = require "valueController"
+local valueController = require "valueController" -- Подключения библиотеки
 
+-- Параметры обработчика
 options = {
-    Address = "/value",
+    Address = "/newValue", -- Путь к обработчику
 }
 
+-- Функция вызываемая при запросе
 function Handler(request)
-    value = request.getQuery("value")
+    -- Записываем названия создаваемой переменной из query параметра
+    local varibleName = request.getQuery("varibleName")
 
-    valueController.newValue(value, 0)
+    valueController.newValue(varibleName, 0) -- Создаем переменную
 
-    request.write("New value "..value.." successfully created")
+    -- Выводим сообщения
+    request.write("New varible "..varibleName.." successfully created") 
 end

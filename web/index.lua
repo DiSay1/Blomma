@@ -1,10 +1,15 @@
-local valueController = require "valueController"
+local valueController = require "valueController" -- Подключения библиотеки
 
+-- Параметры обработчика
 options = {
-    Address = "/",
-    WebSocket = false,
+    Address = "/", -- Путь к обработчику
 }
 
-function Handler (req)
-    req.write("Close count = "..valueController.getValue("closeCount"))
+-- Функция вызываемая при запросе
+function Handler (request)
+    -- Записываем названия переменной из query параметров.
+    local varible = request.getQuery("varible")
+    
+    -- Выводим значения желоемой переменной
+    request.write(varible.." "..valueController.getValue(varible))
 end

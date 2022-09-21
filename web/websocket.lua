@@ -10,7 +10,7 @@ function onMessage(req)
 end
 
 function onClose(req)
-    closeCount = valueController.getValue("closeCount")
+    local closeCount = valueController.getValue("closeCount")
     closeCount = closeCount + 1
     valueController.updateValue("closeCount", closeCount)
 end
