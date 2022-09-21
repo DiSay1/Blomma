@@ -33,6 +33,7 @@ func websocketHandler(rw http.ResponseWriter, req *http.Request) {
 			ws = blommaWS{
 				luaState: a.State,
 			}
+			break
 		}
 	}
 
