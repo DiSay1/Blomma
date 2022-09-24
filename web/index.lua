@@ -1,15 +1,12 @@
-local valueController = require "valueController" -- Подключения библиотеки
+local valueController = require "valueController" -- Library Connections
 
--- Параметры обработчика
+-- Handler Options
 options = {
-    Address = "/", -- Путь к обработчику
+    Address = "/", -- Web path to handler
 }
 
--- Функция вызываемая при запросе
+-- Function called on request
 function Handler (request)
-    -- Записываем названия переменной из query параметров.
-    local varible = request.getQuery("varible")
-
-    -- Выводим значения желоемой переменной
-    request.write(varible.." "..valueController.getValue(varible))
+    -- Outputting the values of the desired variable
+    request.write("Hello world!")
 end
