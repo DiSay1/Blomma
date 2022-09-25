@@ -7,6 +7,9 @@ import (
 	"github.com/pelletier/go-toml"
 )
 
+// I think everything is clear here,
+// I hope comments are not needed
+
 type Config struct {
 	ServerConfig `toml:"server"`
 
