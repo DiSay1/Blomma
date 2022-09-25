@@ -15,6 +15,7 @@ func main() {
 
 	log.Info("Loading config...")
 	config.LoadConfig()
+	log.Info("Config uploaded successfully")
 
 	go server.StartServer()
 	log.Info("Server start...")
