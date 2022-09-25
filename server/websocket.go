@@ -32,6 +32,7 @@ func (h *Handler) websocketHandler(rw http.ResponseWriter, req *http.Request) {
 	ws := blommaWS{ // Save the handler
 		luaState: *h.State,
 	}
+	defer ws.luaState.Close()
 
 	c.SetCloseHandler(ws.closeHandler) // Connection close handler
 
