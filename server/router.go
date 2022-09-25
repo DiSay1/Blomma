@@ -15,7 +15,6 @@ func (h *Handler) indexRouter(rw http.ResponseWriter, req *http.Request) {
 	if req.URL.Path != "/" { // Checking the path
 		_, err := os.Stat("./static" + req.URL.Path) // Trying to find a file in this path
 		if err != nil {                              // If the file is not found
-			h.addressHandler(rw, req)
 			return
 		}
 
