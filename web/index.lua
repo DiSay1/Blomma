@@ -1,5 +1,3 @@
-local valueController = require "valueController" -- Library Connections
-
 -- Handler Options
 options = {
     Address = "/", -- Web path to handler

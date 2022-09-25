@@ -12,7 +12,7 @@ import (
 var upgrader = websocket.Upgrader{} // use default options
 
 type blommaWS struct {
-	luaState *lua.LState
+	luaState lua.LState
 }
 
 func (h *Handler) websocketHandler(rw http.ResponseWriter, req *http.Request) {
@@ -30,23 +30,20 @@ func (h *Handler) websocketHandler(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	ws := blommaWS{ // Save the handler
-		luaState: h.State,
+		luaState: *h.State,
 	}
 
 	c.SetCloseHandler(ws.closeHandler) // Connection close handler
 
-	defer c.Close() // Close connections when needed
-	for {
-		if err := ws.luaState.CallByParam( // Calling the message handler
-			lua.P{
-				Fn:      ws.luaState.GetGlobal("onMessage"),
-				NRet:    1,
-				Protect: true,
-			}, standart.NewDataForWSHandler(ws.luaState, c), // Transferring connection information
-		); err != nil {
-			log.Panic("The function cannot be executed. Error:", err)
-			return
-		}
+	if err := ws.luaState.CallByParam( // Calling the message handler
+		lua.P{
+			Fn:      ws.luaState.GetGlobal("WSHandler"),
+			NRet:    1,
+			Protect: true,
+		}, standart.NewDataForWSHandler(&ws.luaState, c), // Transferring connection information
+	); err != nil {
+		log.Panic("The function cannot be executed. Error:", err)
+		return
 	}
 }
 
@@ -56,7 +53,7 @@ func (ws *blommaWS) closeHandler(code int, text string) error {
 		Fn:      ws.luaState.GetGlobal("onClose"),
 		NRet:    1,
 		Protect: true,
-	}, standart.NewWSOnCloseMessage(ws.luaState, code, text), // We call the connection closing handler function
+	}, standart.NewWSOnCloseMessage(&ws.luaState, code, text), // We call the connection closing handler function
 	); err != nil {
 		return err
 	}
