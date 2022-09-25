@@ -37,20 +37,12 @@ func (h *Handler) websocketHandler(rw http.ResponseWriter, req *http.Request) {
 
 	defer c.Close() // Close connections when needed
 	for {
-		mt, message, err := c.ReadMessage() // Reading messages
-		if err != nil {
-			if !websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) { // Error due to closed message?
-				log.Panic("An error occurred while trying to read the WebSocket packet. Error:", err) // If not, show an error
-				break
-			}
-		}
-
 		if err := ws.luaState.CallByParam( // Calling the message handler
 			lua.P{
 				Fn:      ws.luaState.GetGlobal("onMessage"),
 				NRet:    1,
 				Protect: true,
-			}, standart.NewWSMessage(ws.luaState, mt, message, c), // Passing message information
+			}, standart.NewDataForWSHandler(ws.luaState, c), // Transferring connection information
 		); err != nil {
 			log.Panic("The function cannot be executed. Error:", err)
 			return
