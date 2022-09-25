@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/DiSay1/Blomma/console"
+	"github.com/DiSay1/Blomma/server/states"
 	"github.com/pelletier/go-toml"
 )
 
@@ -85,4 +86,6 @@ func LoadConfig() {
 		log.Fatal("An error occurred while trying to load the config. Error:", err)
 		return
 	}
+
+	states.DEV_MODE = BlommaConfig.DevMode
 }
