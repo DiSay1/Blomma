@@ -16,7 +16,7 @@ func timeSleep(l *lua.LState) int {
 
 func InitTIMELib(l *lua.LState) int {
 	var exports = map[string]lua.LGFunction{ // Library Functions
-		"sleep": newValue,
+		"sleep": timeSleep,
 	}
 
 	t := l.SetFuncs(l.NewTable(), exports) // Initialize functions
