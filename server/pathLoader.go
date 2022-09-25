@@ -27,8 +27,6 @@ var Handlers []*Handler // Handlers
 
 // File example
 var indexLua = `
-local valueController = require "valueController" -- Library Connections
-
 -- Handler Options
 options = {
     Address = "/", -- Web path to handler
