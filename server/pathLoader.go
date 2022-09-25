@@ -121,7 +121,7 @@ func LoadPaths() error {
 
 				resAddress := ""
 
-				if luaAddress.Type() == lua.LTNil { // Check if the path was specified by the developer
+				if luaAddress == nil || luaAddress.Type() == lua.LTNil { // Check if the path was specified by the developer
 					resAddress = strings.ReplaceAll(path, "web/", "/")
 				} else {
 					resAddress = luaAddress.String()

@@ -39,8 +39,8 @@ func apiJSONEncode(L *lua.LState) int {
 
 func InitJSONLib(l *lua.LState) int {
 	var exports = map[string]lua.LGFunction{ // Library Functions
-		"decode": apiJSONDecode,
-		"encode": apiJSONEncode,
+		"Decode": apiJSONDecode,
+		"Encode": apiJSONEncode,
 	}
 
 	t := l.SetFuncs(l.NewTable(), exports) // Initialize functions
