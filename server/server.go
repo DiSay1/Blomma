@@ -1,8 +1,11 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
+	"github.com/DiSay1/Blomma/config"
 	"github.com/DiSay1/Blomma/console"
 )
 
@@ -40,9 +43,20 @@ func StartServer() {
 	log.Info("Paths loaded successfully!")
 
 	go func() { // Starting the HTTP Server
-		if err := http.ListenAndServe(":8080", nil); err != nil {
-			log.Fatal("The server is not running. Error:", err)
+		if config.BlommaConfig.SSL {
+			if err := http.ListenAndServeTLS(config.BlommaConfig.Address+":"+strconv.Itoa(config.BlommaConfig.Port),
+				config.BlommaConfig.CertFile,
+				config.BlommaConfig.KeyFile,
+				nil); err != nil {
+				log.Fatal("The server is not running. Error:", err)
+				return
+			}
+		} else {
+			if err := http.ListenAndServe(config.BlommaConfig.Address+":"+strconv.Itoa(config.BlommaConfig.Port), nil); err != nil {
+				log.Fatal("The server is not running. Error:", err)
+				return
+			}
 		}
 	}()
-	log.Info("Server started successfully!")
+	log.Info(fmt.Scanf("Server started successfully at address %v:%v", config.BlommaConfig.Address, config.BlommaConfig.Port))
 }

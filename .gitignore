@@ -2,3 +2,4 @@
 **/.vscode
 **/static
 **/build.bat
+**/config.toml
