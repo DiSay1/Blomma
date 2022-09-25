@@ -94,6 +94,7 @@ func LoadPaths() error {
 				l.PreloadModule("valueController", standart.InitGLLib)
 				l.PreloadModule("json", standart.InitJSONLib)
 				l.PreloadModule("time", standart.InitTIMELib)
+				l.PreloadModule("random", standart.InitRandomLIB)
 
 				// We load into the virtual machine to get the handler settings
 				if err := l.DoFile("./" + path); err != nil {
