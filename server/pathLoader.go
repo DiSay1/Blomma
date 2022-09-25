@@ -44,11 +44,11 @@ end
 // Function of loading and determining WEB paths
 func LoadPaths() error {
 	// Checking for the presence of the ./web folder
-	if _, err := os.Stat("./web"); err != nil {
+	if _, err := os.Stat("./web/"); err != nil {
 		log.Panic("The ./web folder was not found. I create a new")
 
 		// Folder creation
-		if _, err := os.Create("./web"); err != nil {
+		if err := os.Mkdir("./web", os.ModeDir); err != nil {
 			return fmt.Errorf("the ./web folder was not created. %v", err)
 		}
 
@@ -66,11 +66,11 @@ func LoadPaths() error {
 	}
 
 	// Checking for the presence of the ./satic folder
-	if _, err := os.Stat("./static"); err != nil {
+	if _, err := os.Stat("./static/"); err != nil {
 		log.Panic("The ./static folder was not found. I create a new")
 
 		// Folder creation
-		if _, err := os.Create("./static"); err != nil {
+		if err := os.Mkdir("./static", os.ModeDir); err != nil {
 			return fmt.Errorf("the ./static folder was not created. %v", err)
 		}
 	}
