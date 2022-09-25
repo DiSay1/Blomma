@@ -64,6 +64,15 @@ func (b *BlommaHTTPRequest) write(l *lua.LState) int {
 	if _, err := fmt.Fprint(b.rw, l.ToString(1)); err != nil {
 		log.Panic("No response was sent. Error:", err)
 	}
+
+	return 0
+}
+
+func (b *BlommaHTTPRequest) httpRedirect(l *lua.LState) int {
+	redirectURL := l.ToString(1)
+
+	http.Redirect(b.rw, b.req, redirectURL, http.StatusSeeOther)
+
 	return 0
 }
 
@@ -75,6 +84,8 @@ func NewHTTPRequest(l *lua.LState, rw http.ResponseWriter, req *http.Request) *l
 		"getQuery":    request.getQuery,
 		"getFormData": request.getFormData,
 		"getHeader":   request.getHeaders,
+
+		"redirect": request.getFormData,
 	}
 
 	t := l.SetFuncs(l.NewTable(), exports) // Initializing them
