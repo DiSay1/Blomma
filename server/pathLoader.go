@@ -102,9 +102,9 @@ func LoadPaths() error {
 
 				// We get the handler settings.
 				options := l.GetGlobal("options")
-				var address lua.LValue
+				var address string
 				if options.Type() != lua.LTNil { // If the settings exist, find out the address of the handler
-					address = l.GetField(options, "Address")
+					address = l.GetField(options, "Address").String()
 				}
 
 				isWebSocket := false
@@ -118,30 +118,19 @@ func LoadPaths() error {
 					}
 				}
 
-				// We remember the web path, in case it is not specified
-				webPath := strings.ReplaceAll(path, "web/", "/")
-
-				if address.Type() == lua.LTString { // Web path specified?
-					Handlers = append(Handlers, &Handler{ // Store the handler information with the specified web developer path
-						Address: address.String(),
-						Path:    path,
-
-						isWebSocket: isWebSocket,
-						Type:        "lua",
-
-						State: l,
-					})
-				} else { // If not specified
-					Handlers = append(Handlers, &Handler{ // We save information about the handler with an automatically specified web path
-						Address: webPath,
-						Path:    path,
-
-						isWebSocket: isWebSocket,
-						Type:        "lua",
-
-						State: l,
-					})
+				if address == "" { // Check if the path was specified by the developer
+					address = strings.ReplaceAll(path, "web/", "/")
 				}
+
+				Handlers = append(Handlers, &Handler{ // Check if the path was specified by the developer
+					Address: address,
+					Path:    path,
+
+					isWebSocket: isWebSocket,
+					Type:        "lua",
+
+					State: l,
+				})
 			case "html":
 				webPath := strings.ReplaceAll(path, "web/", "/") // Specify the web path
 				Handlers = append(Handlers, &Handler{            // Remembering information about the handler
