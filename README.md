@@ -14,7 +14,7 @@ See the [documentation](https://github.com/DiSay1/Blomma/wiki) to get started wi
 - [x] Built-in WebSocket Support
 - [ ] Module/library system
 - [ ] Gopher-lua updates to the latest versions of Lua (I'm not sure if I can do it, but I'll try)
-- [ ] Config
+- [x] Config
 
 
 # Goal
