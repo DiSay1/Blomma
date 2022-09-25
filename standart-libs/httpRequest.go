@@ -85,7 +85,7 @@ func NewHTTPRequest(l *lua.LState, rw http.ResponseWriter, req *http.Request) *l
 		"getFormData": request.getFormData,
 		"getHeader":   request.getHeaders,
 
-		"redirect": request.getFormData,
+		"redirect": request.httpRedirect,
 	}
 
 	t := l.SetFuncs(l.NewTable(), exports) // Initializing them

@@ -51,7 +51,11 @@ func (h *Handler) addressHandler(rw http.ResponseWriter, req *http.Request) {
 			}
 		}
 
-		if err := h.State.CallByParam( // We call the function responsible for processing requests
+		lState := *h.State
+
+		defer lState.Close()
+
+		if err := lState.CallByParam( // We call the function responsible for processing requests
 			lua.P{
 				Fn:      h.State.GetGlobal("Handler"),
 				NRet:    1,
