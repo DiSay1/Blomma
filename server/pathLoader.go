@@ -1,7 +1,9 @@
 package server
 
 import (
+	"fmt"
 	"io/fs"
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -23,8 +25,56 @@ type Handler struct {
 
 var Handlers []*Handler // Handlers
 
+// File example
+var indexLua = `
+local valueController = require "valueController" -- Library Connections
+
+-- Handler Options
+options = {
+    Address = "/", -- Web path to handler
+}
+
+-- Function called on request
+function Handler (request)
+    -- Outputting the values of the desired variable
+    request.write("Hello world!")
+end
+`
+
 // Function of loading and determining WEB paths
 func LoadPaths() error {
+	// Checking for the presence of the ./web folder
+	if _, err := os.Stat("./web"); err != nil {
+		log.Panic("The ./web folder was not found. I create a new")
+
+		// Folder creation
+		if _, err := os.Create("./web"); err != nil {
+			return fmt.Errorf("the ./web folder was not created. %v", err)
+		}
+
+		// Creating an index.lua file
+		file, err := os.Create("./web/index.lua")
+		if err != nil {
+			return fmt.Errorf("the index.lua file was not created. %v", err)
+		}
+
+		// Writing an example to a file
+		_, err = file.Write([]byte(indexLua))
+		if err != nil {
+			return fmt.Errorf("the index.lua file was not created. %v", err)
+		}
+	}
+
+	// Checking for the presence of the ./satic folder
+	if _, err := os.Stat("./static"); err != nil {
+		log.Panic("The ./static folder was not found. I create a new")
+
+		// Folder creation
+		if _, err := os.Create("./static"); err != nil {
+			return fmt.Errorf("the ./static folder was not created. %v", err)
+		}
+	}
+
 	// We pass the folder ./web
 	err := filepath.Walk("./web", func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
