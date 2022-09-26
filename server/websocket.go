@@ -3,7 +3,6 @@ package server
 import (
 	"net/http"
 
-	"github.com/DiSay1/Blomma/server/states"
 	"github.com/DiSay1/Blomma/standart-libs"
 	"github.com/gorilla/websocket"
 	lua "github.com/yuin/gopher-lua"
@@ -12,7 +11,7 @@ import (
 var upgrader = websocket.Upgrader{} // use default options
 
 type blommaWS struct {
-	luaState lua.LState
+	luaState *lua.LState
 }
 
 func (h *Handler) websocketHandler(rw http.ResponseWriter, req *http.Request) {
@@ -22,15 +21,29 @@ func (h *Handler) websocketHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if states.DEV_MODE { // If DEV_MODE is enabled
-		if err := h.State.DoFile(h.Path); err != nil { // Interpreting the handler file again
-			log.Panic("File compilation error. Error:", err)
-			return // If an error occurs, exit
-		}
+	/*
+		if states.DEV_MODE { // If DEV_MODE is enabled
+			if err := h.State.DoFile(h.Path); err != nil { // Interpreting the handler file again
+				log.Panic("File compilation error. Error:", err)
+				return // If an error occurs, exit
+			}
+		}*/
+
+	var newLState = lua.NewState()
+
+	// Loading libraries
+	newLState.PreloadModule("valueController", standart.InitGLLib)
+	newLState.PreloadModule("json", standart.InitJSONLib)
+	newLState.PreloadModule("time", standart.InitTIMELib)
+	newLState.PreloadModule("random", standart.InitRandomLIB)
+
+	if err := newLState.DoFile(h.Path); err != nil { // Interpreting the handler file again
+		log.Panic("File compilation error. Error:", err)
+		return // If an error occurs, exit
 	}
 
 	ws := blommaWS{ // Save the handler
-		luaState: *h.State,
+		luaState: newLState,
 	}
 	defer ws.luaState.Close()
 
@@ -41,7 +54,7 @@ func (h *Handler) websocketHandler(rw http.ResponseWriter, req *http.Request) {
 			Fn:      ws.luaState.GetGlobal("WSHandler"),
 			NRet:    1,
 			Protect: true,
-		}, standart.NewDataForWSHandler(&ws.luaState, c), // Transferring connection information
+		}, standart.NewDataForWSHandler(ws.luaState, c), // Transferring connection information
 	); err != nil {
 		log.Panic("The function cannot be executed. Error:", err)
 		return
@@ -54,7 +67,7 @@ func (ws *blommaWS) closeHandler(code int, text string) error {
 		Fn:      ws.luaState.GetGlobal("onClose"),
 		NRet:    1,
 		Protect: true,
-	}, standart.NewWSOnCloseMessage(&ws.luaState, code, text), // We call the connection closing handler function
+	}, standart.NewWSOnCloseMessage(ws.luaState, code, text), // We call the connection closing handler function
 	); err != nil {
 		return err
 	}

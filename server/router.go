@@ -24,7 +24,7 @@ func (h *Handler) indexRouter(rw http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		_, err = fmt.Fprint(rw, data) // and send the file
+		_, err = rw.Write(data) // and send the file
 		if err != nil {
 			log.Panic("An error occurred while trying to send the file:", err)
 			return
