@@ -7,6 +7,9 @@ Blomma is a kind of analogue of Apache + PHP. Actually works on a similar princi
 
 See the [documentation](https://github.com/DiSay1/Blomma/wiki) to get started with this.
 
+See examples of projects:
+  - [BlommaChat](https://github.com/DiSay1/BlommaChat)
+
 # Here is a list of tasks that I would like to implement:
 
 - [x] Path processing system (Actually, the base is done, but I want to redo it a bit)
