@@ -5,7 +5,7 @@ import (
 
 	"github.com/DiSay1/Blomma/config"
 	"github.com/DiSay1/Blomma/console"
-	"github.com/DiSay1/Blomma/server"
+	// "github.com/DiSay1/Blomma/server"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func main() {
 	config.LoadConfig()
 	log.Info("Config uploaded successfully")
 
-	go server.StartServer()
+	//	go server.StartServer()
 	log.Info("Server start...")
 
 	log.Info("Application launched successfully!")
